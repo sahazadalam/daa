@@ -1,0 +1,49 @@
+package a1;
+import java.util.*;
+
+public class JobSequencing {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter number of jobs: ");
+        int n = sc.nextInt();
+        char[] id = new char[n];
+        int[] d = new int[n], p = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            System.out.print("Job ID: "); id[i] = sc.next().charAt(0);
+            System.out.print("Deadline: "); d[i] = sc.nextInt();
+            System.out.print("Profit: "); p[i] = sc.nextInt();
+        }
+
+        // Sort by profit descending
+        for (int i = 0; i < n - 1; i++)
+            for (int j = 0; j < n - i - 1; j++)
+                if (p[j] < p[j + 1]) {
+                    int t = p[j]; p[j] = p[j + 1]; p[j + 1] = t;
+                    t = d[j]; d[j] = d[j + 1]; d[j + 1] = t;
+                    char c = id[j]; id[j] = id[j + 1]; id[j + 1] = c;
+                }
+
+        int maxD = Arrays.stream(d).max().getAsInt();
+        char[] res = new char[maxD];
+        boolean[] slot = new boolean[maxD];
+        int profit = 0;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = d[i] - 1; j >= 0; j--) {
+                if (!slot[j]) {
+                    slot[j] = true;
+                    res[j] = id[i];
+                    profit += p[i];
+                    break;
+                }
+            }
+        }
+
+        System.out.print("Scheduled Jobs: ");
+        for (int i = 0; i < maxD; i++)
+            if (slot[i]) System.out.print(res[i] + " ");
+        System.out.println("\nTotal Profit: " + profit);
+        sc.close();
+    }
+}
